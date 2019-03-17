@@ -1,5 +1,4 @@
 ﻿using System.Windows;
-using _02_Lopukhina.Tools.Navigation;
 
 namespace _02_Lopukhina.Tools.Managers
 {

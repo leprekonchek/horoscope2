@@ -1,20 +1,24 @@
 ﻿using System;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
+using System.Text.RegularExpressions;
+using _02_Lopukhina.Tools.Exceptions;
 
 namespace _02_Lopukhina.Models
 {
     class Person : INotifyPropertyChanged
     {
+        #region Fields
         private string _firstName;
         private string _lastName;
         private string _email;
         private DateTime _birthday;
         private string _zodiacSign = "you don't have your sign, you're unique";
         private string[] _chinaSigns = { "Rat", "Ox", "Tiger", "Rabbit", "Dragon", "Snake", "Horse", "Goat", "Monkey", "Rooster", "Dog", "Pig" };
-        public string _hbCongratulations =
+        public string HbCongratulations =
             "This Birthday wish is just for you, \n And I hope it comes true: \n B e yourself, love and appreciate yourself \n I magine and achieve all you can \n R elax and take it easy \n T ake time and do whatever you want, your \n H umor, never lose it and \n D o not give up, continue going \n A nd remember, you are loved by others \n Y esterday is gone, tomorrow is not here, live today and enjoy the year.";
-        
+        #endregion
+
         #region Properties
         public string FirstName
         {
@@ -142,9 +146,26 @@ namespace _02_Lopukhina.Models
             }
         }
 
-        public bool IsAgeCorrect(int age)
+        public void IsAgeCorrect(int age)
         {
-            return Age >= 0 && Age <= 135;
+            if (age <= 0)
+            {
+                throw new NotBorn();
+            }
+
+            if (age >= 135)
+            {
+                throw new OldToBeAlive(age);
+            }
+        }
+
+        public void EmailValidation(string email)
+        {
+            Regex emailRegex = new Regex("^(?(\")(\".+?(?<!\\\\)\"@)|(([0-9a-z]((\\.(?!\\.))|[-!#\\$%&'\\*\\+/=\\?\\^`{}|~\\w])*)(?<=[0-9a-z])@))(?([)([(\\d{1,3}.){3}\\d{1,3}])|(([0-9a-z][-0-9a-z]*[0-9a-z]*.)+[a-z0-9][-a-z0-9]{0,22}[a-z0-9]))$");
+            if (!emailRegex.IsMatch(email))
+            {
+                throw new NotValidEmail(email);
+            }
         }
 
         #endregion

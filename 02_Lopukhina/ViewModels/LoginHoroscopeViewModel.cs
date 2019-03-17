@@ -1,11 +1,11 @@
 ﻿using System;
 using System.ComponentModel;
-using System.ComponentModel.DataAnnotations;
 using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using System.Windows;
 using _02_Lopukhina.Models;
 using _02_Lopukhina.Tools;
+using _02_Lopukhina.Tools.Exceptions;
 using _02_Lopukhina.Tools.Managers;
 using _02_Lopukhina.Tools.Navigation;
 
@@ -48,25 +48,35 @@ namespace _02_Lopukhina.ViewModels
             bool isFinished = await Task.Run(() =>
             {
                 StationManager.CurrentPerson = _person;
-                if (!Person.IsAgeCorrect(Person.Age))
-                {
-                    MessageBox.Show("Hey, \n" +
-                                    "you haven't born yet or\n " +
-                                    "you are too old to be alive! \n " +
-                                    "If you are alive, than congratulation and I'm pressing F");
 
+                try
+                {
+                    Person.EmailValidation(Person.Email);
+                }
+                catch (NotValidEmail e)
+                {
+                    MessageBox.Show($"Email is not valid: {e.Message}");
                     return false;
                 }
 
-                if (!new EmailAddressAttribute().IsValid(Person.Email))
+                try
                 {
-                    MessageBox.Show("Your email is not valid");
+                    Person.IsAgeCorrect(Person.Age);
+                }
+                catch (NotBorn e)
+                {
+                    MessageBox.Show($"Not correct age: {e.Message}");
+                    return false;
+                }
+                catch (OldToBeAlive e)
+                {
+                    MessageBox.Show($"Not correct age: {e.Message}");
                     return false;
                 }
 
                 if (Person.IsBirthday)
                 {
-                    MessageBox.Show(Person._hbCongratulations);
+                    MessageBox.Show(Person.HbCongratulations);
                 }
 
                 return true;
